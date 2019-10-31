@@ -297,6 +297,7 @@ abstract class CheckBitSetModelBase<T> implements IndexedCheckModel<T> {
     protected void updateMap() {
         // reset the map
         itemBooleanMap.clear();
+        checkedIndices.clear();
         for (int i = 0; i < getItemCount(); i++) {
             final int index = i;
             final T item = getItem(index);
@@ -309,6 +310,8 @@ abstract class CheckBitSetModelBase<T> implements IndexedCheckModel<T> {
             // the selected items list) when the checkbox is toggled
             booleanProperty.addListener(new InvalidationListener() {
                 @Override public void invalidated(Observable o) {
+                    int index = getItemIndex(item);
+
                     if (booleanProperty.get()) {
                         checkedIndices.set(index);
                         final int changeIndex = checkedIndicesList.indexOf(index);
@@ -320,6 +323,14 @@ abstract class CheckBitSetModelBase<T> implements IndexedCheckModel<T> {
                     }
                 }
             });
+        }
+    }
+
+    protected void injectMap(Map<T, BooleanProperty> baseMap) {
+        for (Map.Entry<T, BooleanProperty> iEntry : baseMap.entrySet()) {
+            if (itemBooleanMap.containsKey(iEntry.getKey())) {
+                itemBooleanMap.get(iEntry.getKey()).set(iEntry.getValue().getValue());
+            }
         }
     }
 }

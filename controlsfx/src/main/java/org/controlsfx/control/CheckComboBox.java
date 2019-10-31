@@ -28,8 +28,10 @@ package org.controlsfx.control;
 
 import impl.org.controlsfx.skin.CheckComboBoxSkin;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
@@ -147,43 +149,42 @@ public class CheckComboBox<T> extends ControlsFXControl {
     public ObservableList<T> getItems() {
         return items;
     }
-    
+
     /**
-     * Returns the {@link BooleanProperty} for a given item index in the 
+     * Returns the {@link BooleanProperty} for a given item index in the
      * CheckComboBox. This is useful if you want to bind to the property.
      */
     public BooleanProperty getItemBooleanProperty(int index) {
         if (index < 0 || index >= items.size()) return null;
         return getItemBooleanProperty(getItems().get(index));
     }
-    
+
     /**
-     * Returns the {@link BooleanProperty} for a given item in the 
+     * Returns the {@link BooleanProperty} for a given item in the
      * CheckComboBox. This is useful if you want to bind to the property.
      */
     public BooleanProperty getItemBooleanProperty(T item) {
         return itemBooleanMap.get(item);
     }
-    
-    
-    
+
+
     /**************************************************************************
-     * 
+     *
      * Properties
-     * 
+     *
      **************************************************************************/
 
     // --- Check Model
-    private ObjectProperty<IndexedCheckModel<T>> checkModel = 
+    private ObjectProperty<IndexedCheckModel<T>> checkModel =
             new SimpleObjectProperty<>(this, "checkModel"); //$NON-NLS-1$
-    
+
     /**
      * Sets the 'check model' to be used in the CheckComboBox - this is the
      * code that is responsible for representing the selected state of each
-     * {@link CheckBox} - that is, whether each {@link CheckBox} is checked or 
-     * not (and not to be confused with the 
-     * selection model concept, which is used in the ComboBox control to 
-     * represent the selection state of each row).. 
+     * {@link CheckBox} - that is, whether each {@link CheckBox} is checked or
+     * not (and not to be confused with the
+     * selection model concept, which is used in the ComboBox control to
+     * represent the selection state of each row)..
      */
     public final void setCheckModel(IndexedCheckModel<T> value) {
         checkModelProperty().set(value);
@@ -205,59 +206,62 @@ public class CheckComboBox<T> extends ControlsFXControl {
     public final ObjectProperty<IndexedCheckModel<T>> checkModelProperty() {
         return checkModel;
     }
-    
+
     // --- converter
-    private ObjectProperty<StringConverter<T>> converter = 
+    private ObjectProperty<StringConverter<T>> converter =
             new SimpleObjectProperty<StringConverter<T>>(this, "converter");
-    
+
     /**
-     * A {@link StringConverter} that, given an object of type T, will 
+     * A {@link StringConverter} that, given an object of type T, will
      * return a String that can be used to represent the object visually.
      */
-    public final ObjectProperty<StringConverter<T>> converterProperty() { 
-        return converter; 
+    public final ObjectProperty<StringConverter<T>> converterProperty() {
+        return converter;
     }
-    
-    /** 
+
+    /**
      * Sets the {@link StringConverter} to be used in the control.
-     * @param value A {@link StringConverter} that, given an object of type T, will 
-     * return a String that can be used to represent the object visually.
+     *
+     * @param value A {@link StringConverter} that, given an object of type T, will
+     *              return a String that can be used to represent the object visually.
      */
-    public final void setConverter(StringConverter<T> value) { 
-        converterProperty().set(value); 
+    public final void setConverter(StringConverter<T> value) {
+        converterProperty().set(value);
     }
-    
+
     /**
-     * A {@link StringConverter} that, given an object of type T, will 
+     * A {@link StringConverter} that, given an object of type T, will
      * return a String that can be used to represent the object visually.
      */
-    public final StringConverter<T> getConverter() { 
-        return converterProperty().get(); 
+    public final StringConverter<T> getConverter() {
+        return converterProperty().get();
     }
-    
+
     // --- title
     private StringProperty title = new SimpleStringProperty(null);
-    
+
     /**
-     * The title to use for this control. If a non null value is explicitly 
-     * set by the client, then that string will be used, otherwise a title 
+     * The title to use for this control. If a non null value is explicitly
+     * set by the client, then that string will be used, otherwise a title
      * will be constructed concatenating the selected items
      */
     public final StringProperty titleProperty() {
         return title;
     }
-    
+
     /**
      * Sets the title to use. If it is not null it will be used as title,
      * otherwise title will be constructed by the skin
+     *
      * @param value the string to use as title
      */
     public final void setTitle(String value) {
         title.setValue(value);
     }
-    
+
     /**
      * The title set for this control, if it has been set explicitly by the client.
+     *
      * @return the title if it has been set, null otherwise
      */
     public final String getTitle() {
@@ -294,82 +298,88 @@ public class CheckComboBox<T> extends ControlsFXControl {
      *                                                                         *
      **************************************************************************/
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override protected Skin<?> createDefaultSkin() {
         checkComboBoxSkin = new CheckComboBoxSkin<>(this);
         return checkComboBoxSkin;
     }
-    
+
     // --- show how many items are checked over total
     private BooleanProperty showCheckedCount = new SimpleBooleanProperty(false);
-    
+
     /**
-     * A boolean to decide if the information of how many items are checked 
-     * should be shown beside the fixed title. 
+     * A boolean to decide if the information of how many items are checked
+     * should be shown beside the fixed title.
      * If a {@link #titleProperty()} has been set and this property is set to true
      * then a string like (3/10) would be shown when 3 items out of 10 are
      * checked.<br>
-     * This property has effect only if a fixed title has been set (see {@link #titleProperty()}), 
+     * This property has effect only if a fixed title has been set (see {@link #titleProperty()}),
      * otherwise the title is constructed with a concatenation of the selected items.
-     * 
+     *
      * @return if the count should be shown
      */
     public final BooleanProperty showCheckedCountProperty() {
         return showCheckedCount;
     }
-    
+
     /**
      * Sets the value to use to decide whether the checked items count should be
      * shown or not
+     *
      * @param value the value to set
      */
     public final void setShowCheckedCount(boolean value) {
         showCheckedCount.setValue(value);
     }
-    
+
     /**
      * @return whether the checked items count is set to be shown beside a fixed title
      */
     public final boolean isShowCheckedCount() {
         return showCheckedCount.getValue();
     }
-    
-    
+
+
     /**************************************************************************
-     * 
+     *
      * Support classes
-     * 
+     *
      **************************************************************************/
-    
+
     private static class CheckComboBoxBitSetCheckModel<T> extends CheckBitSetModelBase<T> {
-        
+
         /***********************************************************************
          *                                                                     *
          * Internal properties                                                 *
          *                                                                     *
          **********************************************************************/
-        
+
         private final ObservableList<T> items;
-        
-        
-        
+
+
         /***********************************************************************
          *                                                                     *
          * Constructors                                                        *
          *                                                                     *
          **********************************************************************/
-        
+
         CheckComboBoxBitSetCheckModel(final ObservableList<T> items, final Map<T, BooleanProperty> itemBooleanMap) {
             super(itemBooleanMap);
-            
+
             this.items = items;
-            this.items.addListener((ListChangeListener<T>) c -> updateMap());
-            
+            this.items.addListener((ListChangeListener<T>) c -> {
+                Map<T, BooleanProperty> mapCopy = itemBooleanMap.entrySet().stream()
+                        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+                updateMap();
+                injectMap(mapCopy);
+            });
+
             updateMap();
         }
-        
-        
-        
+
+
         /***********************************************************************
          *                                                                     *
          * Implementing abstract API                                           *
@@ -379,13 +389,14 @@ public class CheckComboBox<T> extends ControlsFXControl {
         @Override public T getItem(int index) {
             return items.get(index);
         }
-        
+
         @Override public int getItemCount() {
             return items.size();
         }
-        
+
         @Override public int getItemIndex(T item) {
             return items.indexOf(item);
         }
     }
+
 }
